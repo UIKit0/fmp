@@ -1,0 +1,3 @@
+title = "Flash MOD Player"
+sourcedir = "."
+genHTML = "y"
