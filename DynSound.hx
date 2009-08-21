@@ -35,22 +35,20 @@ class DynSound
 {
     private static function writeTagInfo(swf:ByteArray,code:Int,len:Int)
     {
-        if (len >= 63)
-        {
+        if (len >= 63) {
             swf.writeShort((code << 6)|0x3F);
             swf.writeInt(len);
-        }
-        else swf.writeShort((code << 6)|len);
+        } else swf.writeShort((code << 6)|len);
     }
 
-	/**
-	 * Play a waveform sound.
-	 *
-	 * @param wave a ByteArray containing the sound waveform.
-	 * @param repeat repeat the sound playback
-	 * @param sixteen use 16bit samples (two bytes per sample) instead of 8bit
-	 * @return the Loader object constructed by calling this function
-	 */
+    /**
+     * Play a waveform sound.
+     *
+     * @param wave a ByteArray containing the sound waveform.
+     * @param repeat repeat the sound playback
+     * @param sixteen use 16bit samples (two bytes per sample) instead of 8bit
+     * @return the Loader object constructed by calling this function
+     */
     public static function playSound(wave:ByteArray,repeat:Bool,sixteen:Bool):Loader
     {
         var swf:ByteArray = new ByteArray();
@@ -81,29 +79,29 @@ class DynSound
         // DefineSound tag
         writeTagInfo(swf, 14, 2 + 1 + 4 + wave.length); 
         swf.writeShort(1);      // sound (character) ID
-		if (sixteen) {
-			swf.writeByte(0x3E);    // sound format (uncompressed) = 4 bits (3)
-									// 44100 rate = 2 bits (3)
-									// 8bit samples = 1 bit (0)
-									// mono sound = 1 bit (0)
-									// 00111110 = 0x3E
-		} else {
-			swf.writeByte(0x3C);    // sound format (uncompressed) = 4 bits (3)
-									// 44100 rate = 2 bits (3)
-									// 8bit samples = 1 bit (0)
-									// mono sound = 1 bit (0)
-									// 00111100 = 0x3C
-		}
+        if (sixteen) {
+            swf.writeByte(0x3E);    // sound format (uncompressed) = 4 bits (3)
+                                    // 44100 rate = 2 bits (3)
+                                    // 8bit samples = 1 bit (0)
+                                    // mono sound = 1 bit (0)
+                                    // 00111110 = 0x3E
+        } else {
+            swf.writeByte(0x3C);    // sound format (uncompressed) = 4 bits (3)
+                                    // 44100 rate = 2 bits (3)
+                                    // 8bit samples = 1 bit (0)
+                                    // mono sound = 1 bit (0)
+                                    // 00111100 = 0x3C
+        }
         swf.writeUnsignedInt(wave.length); // sample count (one byte=one sample)
         swf.writeBytes(wave);   // samples
         
         // StartSound tag
         writeTagInfo(swf, 15, 2 + 1);
         swf.writeShort(1);      // character id of the sound
-		if (repeat) {
-			swf.writeByte(4);	// thanks to oNyx for this :-)
-			swf.writeShort(65535);
-		} else swf.writeByte(0);       // SOUNDINFO flags (all 0)
+        if (repeat) {
+            swf.writeByte(4);    // thanks to oNyx for this :-)
+            swf.writeShort(65535);
+        } else swf.writeByte(0);       // SOUNDINFO flags (all 0)
         
         // End tag
         writeTagInfo(swf, 0, 0);
