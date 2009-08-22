@@ -566,11 +566,11 @@ class ModPlayer
                                 if (corder >= order.length) {
                                     corder = order.length-1;
                                     crow = 63;
-                                    cpat = order[corder];
-                                    cpattern = pat[cpat];
                                 } else {
                                     crow = 0;
                                 }
+                                cpat = order[corder];
+                                cpattern = pat[cpat];
                                 nextcheckrow = true;
                             }
                         case 0x0C:
