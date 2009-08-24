@@ -654,13 +654,13 @@ class ModPlayer
                     if (rowtick > 0) {
                         if (cs.cutsample && cs.cutsampleticks <= rowtick) {
                             cs.cvolume = cs.rvolume = 0;
-                            cs.csmp = null;
                             cs.cutsample = false;
                         }
                         
                         if (cs.delaynote && cs.delaynoteticks <= rowtick) {
                             cs.csp = 0;
                             cs.delaynote = false;
+                            cs.cvolume = cs.rvolume = cs.csmp.volume;
                         }
                         
                         if (cs.retriggersample && cs.csmp != null) {
@@ -668,6 +668,7 @@ class ModPlayer
                                 cs.csp = 0;
                                 cs.cslength = cs.csmp.length << 16;
                                 cs.cslooplen = cs.cslength;
+                                cs.cvolume = cs.rvolume = cs.csmp.volume;
                                 cs.retriggersamplectr = 0;
                             }
                         }
@@ -752,7 +753,7 @@ class ModPlayer
                 cs.csp += cs.cspinc;
                 if (cs.csp >= cs.cslooplen) {
                     if (cs.csmp.looplen < 2) {
-                        cs.csmp = null;
+                        cs.rvolume = 0;
                         continue;
                     } else {
                         cs.csp = cs.csmp.loopstart << 16;
