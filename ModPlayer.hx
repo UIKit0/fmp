@@ -290,6 +290,10 @@ class ModPlayer
                    (data[1080] == 56 && data[1081] == 67 && data[1082] == 72 && data[1083] == 78)) { // 8CHN signature
             samplecount = 31;
             chancount = 8;
+        } else if (data[1082] == 67 && data[1083] == 72) {   // xxCH signature
+            samplecount = 31;
+            xtrace("moo");
+            chancount = (data[1080]-'0'.charCodeAt(0))*10 + (data[1081]-'0'.charCodeAt(0));
         } else {
             samplecount = 15;
         }
@@ -660,7 +664,7 @@ class ModPlayer
                             cs.delaynote = false;
                         }
                         
-                        if (cs.retriggersample) {
+                        if (cs.retriggersample && cs.csmp != null) {
                             if (++cs.retriggersamplectr == cs.retriggersampleticks) {
                                 cs.csp = 0;
                                 cs.cslength = cs.csmp.length << 16;
