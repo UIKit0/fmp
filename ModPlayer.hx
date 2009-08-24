@@ -292,7 +292,6 @@ class ModPlayer
             chancount = 8;
         } else if (data[1082] == 67 && data[1083] == 72) {   // xxCH signature
             samplecount = 31;
-            xtrace("moo");
             chancount = (data[1080]-'0'.charCodeAt(0))*10 + (data[1081]-'0'.charCodeAt(0));
         } else {
             samplecount = 15;
