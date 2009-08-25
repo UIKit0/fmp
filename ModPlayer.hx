@@ -591,8 +591,6 @@ class ModPlayer
                             if (arg > 0x3F) arg = 0x3F;
                             breakpatonrow = true;
                             breakpatnextrow = arg;
-                            ticksmpctr = samplespertick - 1;
-                            rowtick = ticksperrow - 1;
                         case 0x0E:
                             switch (arg&0xF0) {
                             case 0x00: // ignore
