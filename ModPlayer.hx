@@ -35,6 +35,7 @@ import flash.utils.Timer;
 
 private class Sample
 {
+    public var name:String;
     public var wave:Array<Int>;
     public var length:Int;
     public var fine:Int;
@@ -73,11 +74,11 @@ private  class Pattern
 private  class ChanState
 {
     public var csmp:Sample;
-    public var cslength:Int;
-    public var cslooplen:Int;
+    public var cslength:UInt;
+    public var cslooplen:UInt;
     public var cperiod:Int;
     public var lastnoteperiod:Int;
-    public var csp:Int;
+    public var csp:UInt;
     public var cspinc:Int;
     public var cvolume:Int;
     public var rvolume:Int;
@@ -305,7 +306,12 @@ class ModPlayer
         xtrace("Module title: " + name);
         data.position = 20;
         for (i in 0...samplecount) {
-            data.position += 22;
+            name = "";
+            for (j in 0...22) {
+                var c:Int = data.readUnsignedByte();
+                if (c > 31 && c < 127)
+                    name += String.fromCharCode(c);
+            }
             var len:Int = data.readUnsignedShort()*2;
             var fine:Int = data.readUnsignedByte()&0x0F;
             var vol:Int = data.readUnsignedByte();
@@ -316,6 +322,7 @@ class ModPlayer
             if (fine > 7) fine = fine - 16;
             
             smp[i] = new Sample();
+            smp[i].name = name;
             smp[i].length = len;
             smp[i].fine = fine;
             smp[i].volume = vol;
@@ -483,7 +490,7 @@ class ModPlayer
                     if (note.sample != null) {
                         cs.csmp = note.sample;
                         cs.cvolume = cs.rvolume = cs.csmp.volume;
-                        cs.cslength = cs.csmp.length << 16;
+                        cs.cslength = cs.csmp.length*16384;
                         cs.cslooplen = cs.cslength;
                     }
                     if (note.period != 0 && cs.csmp != null && !cs.slidetonote) {
@@ -493,7 +500,7 @@ class ModPlayer
                         else cs.cperiod = note.period;
                         cs.lastnoteperiod = cs.cperiod;
                         var amigabps:Float = 7159090.5/(cs.cperiod*2);
-                        cs.cspinc = Std.int((amigabps/44100.0)*65536);
+                        cs.cspinc = Std.int((amigabps/44100.0)*16384);
                         cs.csp = 0;
                         cs.slideperiod = false;
                         if (cs.vibratowave < 4) cs.vibratopos = 0;
@@ -552,7 +559,7 @@ class ModPlayer
                             if (arg != 0) {
                                 arg <<= 8;
                                 if (arg >= cs.csmp.length) arg = cs.csmp.length;
-                                cs.csp = arg << 16;
+                                cs.csp = arg << 14;
                             }
                         case 0x05,0x06,0x0A:
                             cs.slidevolume = true;
@@ -584,17 +591,19 @@ class ModPlayer
                             if (arg > 0x3F) arg = 0x3F;
                             breakpatonrow = true;
                             breakpatnextrow = arg;
+                            ticksmpctr = samplespertick - 1;
+                            rowtick = ticksperrow - 1;
                         case 0x0E:
                             switch (arg&0xF0) {
                             case 0x00: // ignore
                             case 0x10:
                                 cs.cperiod -= arg&0x0F;
                                 var amigabps:Float = 7159090.5/(cs.cperiod*2);
-                                cs.cspinc = Std.int((amigabps/44100.0)*65536);
+                                cs.cspinc = Std.int((amigabps/44100.0)*16384);
                             case 0x20:
                                 cs.cperiod += arg&0x0F;
                                 var amigabps:Float = 7159090.5/(cs.cperiod*2);
-                                cs.cspinc = Std.int((amigabps/44100.0)*65536);
+                                cs.cspinc = Std.int((amigabps/44100.0)*16384);
                             case 0x30: notsupport(arg&0xF0,cpat,crow);
                             case 0x40:
                                 switch (arg&0x0F) {
@@ -666,7 +675,7 @@ class ModPlayer
                         if (cs.retriggersample && cs.csmp != null) {
                             if (++cs.retriggersamplectr == cs.retriggersampleticks) {
                                 cs.csp = 0;
-                                cs.cslength = cs.csmp.length << 16;
+                                cs.cslength = cs.csmp.length << 14;
                                 cs.cslooplen = cs.cslength;
                                 cs.cvolume = cs.rvolume = cs.csmp.volume;
                                 cs.retriggersamplectr = 0;
@@ -689,7 +698,7 @@ class ModPlayer
                             else if (cs.cperiod > 856)
                                 cs.cperiod = 856;
                             var amigabps:Float = 7159090.5/(cs.cperiod*2);
-                            cs.cspinc = Std.int((amigabps/44100.0)*65536);
+                            cs.cspinc = Std.int((amigabps/44100.0)*16384);
                         }
                         
                         if (cs.slidetonote) {
@@ -700,7 +709,7 @@ class ModPlayer
                                 cs.cperiod = cs.slidetonotetarget;
                             }
                             var amigabps:Float = 7159090.5/(cs.cperiod*2);
-                            cs.cspinc = Std.int((amigabps/44100.0)*65536);
+                            cs.cspinc = Std.int((amigabps/44100.0)*16384);
                         }
                     }
                     
@@ -709,17 +718,17 @@ class ModPlayer
                         if (cs.arpeggiotick == 0) {
                             aperiod = periods[cs.arpeggionote + cs.csmp.fine*84];
                             var amigabps:Float = 7159090.5/(aperiod*2);
-                            cs.cspinc = Std.int((amigabps/44100.0)*65536);
+                            cs.cspinc = Std.int((amigabps/44100.0)*16384);
                             cs.arpeggiotick++;
                         } else if (cs.arpeggiotick == 1) {
                             aperiod = periods[cs.arpeggionote + cs.csmp.fine*84 + cs.arpeggiosemi1];
                             var amigabps:Float = 7159090.5/(aperiod*2);
-                            cs.cspinc = Std.int((amigabps/44100.0)*65536);
+                            cs.cspinc = Std.int((amigabps/44100.0)*16384);
                             cs.arpeggiotick++;
                         } else if (cs.arpeggiotick == 2) {
                             aperiod = periods[cs.arpeggionote + cs.csmp.fine*84 + cs.arpeggiosemi2];
                             var amigabps:Float = 7159090.5/(aperiod*2);
-                            cs.cspinc = Std.int((amigabps/44100.0)*65536);
+                            cs.cspinc = Std.int((amigabps/44100.0)*16384);
                             cs.arpeggiotick = 0;
                         }
                     }
@@ -733,7 +742,7 @@ class ModPlayer
                         // sinewave only here.
                         var vibval:Int = cs.vibratodepth*sinewave[cs.vibratopos&0x3F] >> 7;
                         var amigabps:Float = 7159090.5/((cs.cperiod+vibval)*2);
-                        cs.cspinc = Std.int((amigabps/44100.0)*65536);
+                        cs.cspinc = Std.int((amigabps/44100.0)*16384);
                         if (rowtick > 0) cs.vibratopos += cs.vibratospeed;
                     }
                     
@@ -748,7 +757,7 @@ class ModPlayer
                 
                 if (cs.csmp == null || cs.rvolume == 0) continue;
                 
-                if (!cs.delaynote) mixed += (cs.csmp.wave[cs.csp>>16]*cs.rvolume);
+                if (!cs.delaynote) mixed += (cs.csmp.wave[cs.csp>>14]*cs.rvolume);
                 
                 cs.csp += cs.cspinc;
                 if (cs.csp >= cs.cslooplen) {
@@ -756,8 +765,8 @@ class ModPlayer
                         cs.rvolume = 0;
                         continue;
                     } else {
-                        cs.csp = cs.csmp.loopstart << 16;
-                        cs.cslooplen = cs.csp + (cs.csmp.looplen << 16);
+                        cs.csp = cs.csmp.loopstart << 14;
+                        cs.cslooplen = cs.csp + (cs.csmp.looplen << 14);
                     }
                 }
             }
