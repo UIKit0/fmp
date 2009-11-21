@@ -120,5 +120,62 @@ class DynSound
         
         return ldr;
     }
+    
+    /**
+     * Basically the same as {@link playSound} but skips the WAV file header
+     * bytes. It doesn't parse the WAV data, so the sixteen argument must be
+     * valid. It also assumes that the wave data are at the end of the file.
+     *
+     * @param wave a ByteArray pointing to WAV file data.
+     * @param repeat if true the wave will be repeated.
+     * @param sixteen if true the wave is 16bit data instead of 8bit.
+     * @param volume to play the wave (255=full, 0=silent).
+     * @return the Loader object used to play the waveform or null if failed.
+     */
+    public static function playWAV(wave:ByteArray,repeat:Bool,sixteen:Bool,volume:Int):Loader
+    {
+        if (volume <= 0) return null;
+        if (volume > 255) volume = 255;
+        wave.endian = flash.utils.Endian.LITTLE_ENDIAN;
+        wave.position += 12; // skip 'RIFF' <size> 'WAVE'
+        while (wave.bytesAvailable > 0) {
+            var c1:Int = wave.readByte();
+            var c2:Int = wave.readByte();
+            var c3:Int = wave.readByte();
+            var c4:Int = wave.readByte();
+            if (c1 == 0x64 && c2 == 0x61 && c3 == 0x74 && c4 == 0x61) { // 'data'
+                if (volume == 255) {
+                    wave.position += 4; // skip size;
+                    return playSound(wave, repeat, sixteen);
+                } else {
+                    var size:Int = wave.readInt();
+                    var pos:Int = 0;
+                    var ww:ByteArray = new ByteArray();
+                    ww.endian = flash.utils.Endian.LITTLE_ENDIAN;
+                    if (sixteen) {
+                        while (pos < size) {
+                            ww.writeShort((wave.readShort()*volume) >> 8);
+                            pos += 2;
+                        }
+                    } else {
+                        while (pos < size) {
+                            ww.writeByte((wave.readByte()*volume) >> 8);
+                            pos++;
+                        }
+                    }
+                    ww.position = 0;
+                    return playSound(ww, repeat, sixteen);
+                }
+            } else {
+                var s1:Int = wave.readByte();
+                var s2:Int = wave.readByte();
+                var s3:Int = wave.readByte();
+                var s4:Int = wave.readByte();
+                var size:UInt = (s4 << 24)|(s3 << 16)|(s2 << 8)|s1;
+                wave.position += size;
+            }
+        }
+        return null;
+    }
 }
 
