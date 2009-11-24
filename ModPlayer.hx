@@ -914,7 +914,6 @@ class ModPlayer
             xtrace('pderror - ' + e.message);
             if (onProgress != null) onProgress(-1);
         }
-        data.length = 0; // data array is not needed any more, free it
         var stamp:Float = haxe.Timer.stamp();
         var self = this;
         try {
