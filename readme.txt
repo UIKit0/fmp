@@ -129,6 +129,7 @@ The source code distribution is made up of the following files:
 
     authors.txt     List of authors.
     compile.hxml    haXe compile file for the Test.hx test SWF
+    changes.txt     Changes between versions
     docinfo.txt     SlashDOC configuration file
     DynSound.hx     The DynSound class
     license.txt     Flash MOD Player (and DynSound) license text
