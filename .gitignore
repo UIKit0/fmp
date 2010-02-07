@@ -2,3 +2,8 @@
 *.swf
 as3_src/
 *.mod
+*.zip
+flashmodplayer*
+*.xm
+output/
+site/
