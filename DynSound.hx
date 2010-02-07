@@ -1,6 +1,6 @@
 /*
  * Flash 9 Dynamic Sound Playback (DynSound)
- * Copyright (C) 2008-2009 Kostas Michalopoulos
+ * Copyright (C) 2008-2010 Kostas Michalopoulos
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the authors be held liable for any damages
@@ -47,9 +47,10 @@ class DynSound
      * @param wave a ByteArray containing the sound waveform.
      * @param repeat repeat the sound playback
      * @param sixteen use 16bit samples (two bytes per sample) instead of 8bit
+     * @param stereo use stereo playback
      * @return the Loader object constructed by calling this function
      */
-    public static function playSound(wave:ByteArray,repeat:Bool,sixteen:Bool):Loader
+    public static function playSound(wave:ByteArray,repeat:Bool,sixteen:Bool,stereo:Bool):Loader
     {
         var swf:ByteArray = new ByteArray();
         var ldr:Loader;
@@ -79,19 +80,13 @@ class DynSound
         // DefineSound tag
         writeTagInfo(swf, 14, 2 + 1 + 4 + wave.length); 
         swf.writeShort(1);      // sound (character) ID
-        if (sixteen) {
-            swf.writeByte(0x3E);    // sound format (uncompressed) = 4 bits (3)
-                                    // 44100 rate = 2 bits (3)
-                                    // 8bit samples = 1 bit (0)
-                                    // mono sound = 1 bit (0)
-                                    // 00111110 = 0x3E
-        } else {
-            swf.writeByte(0x3C);    // sound format (uncompressed) = 4 bits (3)
-                                    // 44100 rate = 2 bits (3)
-                                    // 8bit samples = 1 bit (0)
-                                    // mono sound = 1 bit (0)
-                                    // 00111100 = 0x3C
-        }
+		
+		swf.writeByte(0x3C + ((sixteen)? 2 : 0) + ((stereo)? 1 : 0));
+			// sound format (uncompressed) = 4 bits (3)
+			// 44100 rate = 2 bits (3)
+			// 16bit samples = 1 bit
+			// stereo sound = 1 bit
+			
         swf.writeUnsignedInt(wave.length); // sample count (one byte=one sample)
         swf.writeBytes(wave);   // samples
         
@@ -146,7 +141,7 @@ class DynSound
             if (c1 == 0x64 && c2 == 0x61 && c3 == 0x74 && c4 == 0x61) { // 'data'
                 if (volume == 255) {
                     wave.position += 4; // skip size;
-                    return playSound(wave, repeat, sixteen);
+                    return playSound(wave, repeat, sixteen, false);
                 } else {
                     var size:Int = wave.readInt();
                     var pos:Int = 0;
@@ -164,7 +159,7 @@ class DynSound
                         }
                     }
                     ww.position = 0;
-                    return playSound(ww, repeat, sixteen);
+                    return playSound(ww, repeat, sixteen, false);
                 }
             } else {
                 var s1:Int = wave.readByte();
