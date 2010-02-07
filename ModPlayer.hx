@@ -1262,7 +1262,7 @@ class ModPlayer
      */
     public function new()
     {
-        showTraces = true;
+        showTraces = false;
         segbreak = 500000;
         repeating = true;
         stereo = false;
