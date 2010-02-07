@@ -1,6 +1,6 @@
 /*
  * Flash 9 Dynamic Sound Playback (DynSound)
- * Copyright (C) 2008-2010 Kostas Michalopoulos
+ * Copyright (C) 2008-2010 Kostas Michalopoulos and Mike Wiering
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the authors be held liable for any damages
@@ -19,6 +19,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  *
  * Kostas Michalopoulos <badsector@runtimeterror.com>
+ * Mike Wiering
  */
 
 import flash.display.Loader;

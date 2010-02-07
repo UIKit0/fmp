@@ -1,6 +1,6 @@
 /*
  * Flash Module Player 
- * Copyright (C) 2008-2009 Kostas Michalopoulos
+ * Copyright (C) 2008-2010 Kostas Michalopoulos and Mike Wiering
  * 
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the authors be held liable for any damages
@@ -19,6 +19,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  *
  * Kostas Michalopoulos <badsector@runtimeterror.com>
+ * Mike Wiering
  */
  
 /*! @module "Flash MOD Player"
@@ -154,7 +155,7 @@ private  class ChanState
 /**
  * This class provides a full MOD player. It synthesizes a full waveform from a
  * MOD file and uses the {@link DynSound} class to play the synthesized
- * waveform.
+ * waveform. Since version 1.3 there is also partial support for XM files.
  */
 class ModPlayer
 {
@@ -190,12 +191,25 @@ class ModPlayer
     {
         if (showTraces) trace(msg);
     }
-    
+
+    /**
+     * Enable or disable repeated playback. If this is set to true, the player
+     * will repeat the MOD playback forever. By default repeating is enabled.
+     *
+     * @param value if true, enables repeating
+     */
     public function setRepeating(value:Bool)
     {
         repeating = value;
     }
-    
+
+    /**
+     * Enable or disable stereo playback. Stereo playback adds more depth to the
+     * music but on the other hand it increases precalculation time and memory
+     * consumption. By default stereo is disabled.
+     *
+     * @param value if true, enables stereo playback.
+     */
     public function setStereo(value:Bool)
     {
         stereo = value;
@@ -698,11 +712,6 @@ class ModPlayer
             else
                 xtrace("Command not supported at pat " + pat + " row " + row + ": " + code);
         }
-    }
-    
-    public static function getCurrentSWFUrl():Dynamic
-    {
-        return flash.Lib.current.stage.loaderInfo.url;
     }
     
     // state variables for genSegment
@@ -1332,4 +1341,3 @@ class ModPlayer
         flash.media.SoundMixer.stopAll();
     }
 }
-

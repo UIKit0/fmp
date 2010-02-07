@@ -1,8 +1,8 @@
 ===============================
-Flash Module Player version 1.2
+Flash Module Player version 1.3
 ===============================
 
-Copyright (C) 2008, 2009 Kostas Michalopoulos
+Copyright (C) 2008-2010 Kostas Michalopoulos and Mike Wiering
 
 This is the full source code of the Flash MOD Player, an Amiga
 Protracker/SoundTracker MOD music file player for Flash 9 and newer versions
@@ -66,11 +66,19 @@ soundwave is generated:
     mp.onProgress = onProgress;
     mp.play("music.mod");
 
-2. Repeating
-------------
+2. Repeating and stereo
+-----------------------
 By default repeating is enabled. To disable do:
 
     mp.setRepeating(false);
+
+Thanks to Mike Wiering's patch, since version 1.3 FMP and DynSound
+have stereo playback support. To enable it use
+
+    mp.setStereo(true);
+
+Stereo playback increases precalculation time and memory synthesis,
+though, so make sure it does make a significant difference :-).
 
 3. Stopping
 -----------
@@ -101,10 +109,25 @@ Please note: in haXe 2.03 the -resource is broken for Flash targets and if you
 use big resources (more than 32kb maybe) it will make the Flash Player to crash!
 Prefer binary data embedded via a SWF library using SWFmill
 
+5. XM support
+-------------
+Mike Wiering added initial XM support for 1.3. Currently not all
+commands are supported and there is little testing done. The following
+commands are known to not be supported:
+
+         Kxx (key off after xx ticks)
+         Lxx (set volume envelope position)
+         R.. (retrigger note with volume slide)
+         Txy (tremor)
+         Xxy (extra fine portamento)
+
+Also envelopes are currently not supported.
+         
 Files
 =====
 The source code distribution is made up of the following files:
 
+    authors.txt     List of authors.
     compile.hxml    haXe compile file for the Test.hx test SWF
     docinfo.txt     SlashDOC configuration file
     DynSound.hx     The DynSound class
@@ -112,7 +135,7 @@ The source code distribution is made up of the following files:
     Makefile        Makefile. Creates as3 source code and SWF from ModPlayer.
     ModPlayer.hx    The Flash MOD Player classes (ModPlayer is what you want).
     readme.txt      This file
-    Text.hx         A small test. This is the player in FMP's site.
+    Test.hx         A small test. This is the player in FMP's site.
 
 To use Flash MOD Player you only need DynSound.hx and ModPlayer.hx.
 
@@ -125,7 +148,7 @@ You can contact me via email at:
 Flash MOD Player's page is located at:
 
     http://realm.badsectoracula.com/fmp/ (Official page)
-    http://github.com/badsector/Flash-MOD-Player/ (GitHub repository)
+    http://git.runtimeterror.com/fmp (git repository view)
 
 My webpage is located at:
 

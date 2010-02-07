@@ -62,6 +62,7 @@ class Test
             mp = new ModPlayer();
             mp.onProgress = function(prg:Int) { setProgress(prg); }
             flash.media.SoundMixer.stopAll();
+            mp.setStereo(true);
             mp.play(musix[curmus]);
         }
         else te.text = "Stopped\n\nClick to start";
@@ -84,12 +85,13 @@ class Test
             var musicfiles:String = flash.Lib.current.loaderInfo.parameters.modfile;
             musix = musicfiles.split(",");
         } catch (whatever:Dynamic) {
-            musix = ["game-menu.mod"];
+            musix = ["fog_2.xm"];
         }
         
         lastclick = haxe.Timer.stamp();
         mp = new ModPlayer();
         mp.onProgress = function(prg:Int) { setProgress(prg); }
+        mp.setStereo(true);
         mp.play(musix[0]);
     }
 }

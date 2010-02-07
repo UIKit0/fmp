@@ -1,0 +1,6 @@
+FMP authors
+-----------
+
+Kostas Michalopoulos (maintainer, started fmp, main developer)
+Mike Wiering (added stereo support, initial XM support)
+oNyx (looping support)
