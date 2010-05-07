@@ -44,7 +44,7 @@ private class Sample
     public var loopstart:Int;
     public var looplen:Int;
     
-    public var flags:Int;  //*
+    public var flags:Int;  // XM Support
     public var pan:Int;
     public var relative:Int;
     public var sixteen:Int;
@@ -53,7 +53,7 @@ private class Sample
 }
 
 
-//*
+// XM Support
 private class Instrument
 {
     public var samplecount:Int;
@@ -83,7 +83,7 @@ private class Instrument
 private class Note
 {
     //public var sample:Sample;
-    public var instrument:Instrument; //*
+    public var instrument:Instrument; // XM Support
     
     public var period:Int;
     public var peridx:Int;
@@ -166,7 +166,7 @@ class ModPlayer
     public var pat:Array<Pattern>;
     public var smp:Array<Sample>;
     
-    public var instr:Array<Instrument>;  //*
+    public var instr:Array<Instrument>;  // XM Support
     
     public var order:Array<Int>;
     public var chancount:Int;
@@ -180,7 +180,7 @@ class ModPlayer
     public var repeating:Bool;
     public var stereo:Bool;
     
-    public var xm: Bool;  //*
+    public var xm: Bool;  // XM Support
     public var xmflags:Int;
     public var defaulttempo:Int;
     public var defaultbeatspermin:Int;
@@ -221,7 +221,7 @@ class ModPlayer
         var samplecount:Int = 0;
         var patcount:Int;
         
-        var instrcount:Int = 0;  //*
+        var instrcount:Int = 0;  // XM Support
         var nextpos:Int = 0;
         
         var rowcount:Int = 64;
@@ -342,7 +342,7 @@ class ModPlayer
                                   
         xtrace("Parsing mod data...");
         
-        //*
+        // XM Support
         globalvolume = 0xFF;
         defaulttempo = 6;
         defaultbeatspermin = 125;
@@ -457,7 +457,7 @@ class ModPlayer
                 smp[i].relative = 0;
             }
             
-            //*
+            // XM Support
             instr = new Array<Instrument>();
             for (i in 0...samplecount) {
                 instr[i] = new Instrument();
@@ -511,7 +511,7 @@ class ModPlayer
             for (r in 0...rowcount) {
                 for (ch in 0...chancount) {
                     
-                    if (xm) {  //*
+                    if (xm) {  // XM Support
                         
                         var note:Int = data.readUnsignedByte();
                         var ins:Int = 0;
@@ -536,7 +536,7 @@ class ModPlayer
                             period = periods[peridx];
                         }
                             
-                        pat[i].channel[ch].note[r].instrument = ins == 0? null : instr[ins - 1];  //*
+                        pat[i].channel[ch].note[r].instrument = ins == 0? null : instr[ins - 1];  // XM Support
                         pat[i].channel[ch].note[r].period = period;
                         pat[i].channel[ch].note[r].peridx = peridx;
                         pat[i].channel[ch].note[r].command = effect;
@@ -566,7 +566,7 @@ class ModPlayer
                         }
                         
                         //pat[i].channel[ch].note[r].sample = sampidx==0?null:smp[sampidx - 1];
-                        pat[i].channel[ch].note[r].instrument = sampidx==0?null:instr[sampidx - 1];  //*
+                        pat[i].channel[ch].note[r].instrument = sampidx==0?null:instr[sampidx - 1];  // XM Support
                         
                         pat[i].channel[ch].note[r].period = period;
                         pat[i].channel[ch].note[r].peridx = peridx;
@@ -577,11 +577,11 @@ class ModPlayer
                 }
             }
             
-            if (xm)   //*
+            if (xm)   // XM Support
                 data.position = nextpos;
         }
         
-        if (xm) {   //*
+        if (xm) {   // XM Support
             
             // load instruments + samples
             for (i in 0...instrcount)
@@ -785,12 +785,12 @@ class ModPlayer
                         cs.pan = cs.channelpan;
                         
                         //if (note.sample != null) {
-                        if (note.instrument != null) {  //*
+                        if (note.instrument != null) {  // XM Support
                             //cs.csmp = note.sample;
                             var s:Int = (xm)? note.instrument.samplepernote[note.peridx % 84] : 0;
                             
                             if (s < note.instrument.samplecount) {
-                                cs.csmp = note.instrument.sample[s];  //*
+                                cs.csmp = note.instrument.sample[s];  // XM Support
                                 
                                 cs.cvolume = cs.rvolume = cs.csmp.volume;
                                 cs.cslength = cs.csmp.length * 16384;
@@ -962,7 +962,7 @@ class ModPlayer
                                     samplespertick = Std.int((44100*60)/tickspermin);
                                 }
                             
-                            //*
+                            // XM Support
                             case 0x10:  // "G": set global volume xx=0..40
                                 globalvolume = ((arg << 2) - 1) & 0xFF;
                             case 0x11:  // "H": global volume slide, x0 up, 0x down
@@ -1094,7 +1094,7 @@ class ModPlayer
                 if (cs.csmp == null || cs.rvolume == 0) continue;
                 
                 if (!cs.delaynote) {
-                    var smp = (cs.csmp.wave[cs.csp >> 14] * cs.rvolume * globalvolume) >> 8;  //*
+                    var smp = (cs.csmp.wave[cs.csp >> 14] * cs.rvolume * globalvolume) >> 8;  // XM Support
                     
                     mixed += smp;
                     mixedLeft += (smp*(0xFF-cs.pan))>>8;
@@ -1155,7 +1155,7 @@ class ModPlayer
         states = new Array<ChanState>();
         
         // rowspermin = 125*4;
-        rowspermin = defaultbeatspermin * 4;  //*
+        rowspermin = defaultbeatspermin * 4;  // XM Support
         // ticksperrow = 6;
         ticksperrow = defaulttempo;
         // tickspermin = rowspermin * ticksperrow;
