@@ -403,7 +403,7 @@ class ModPlayer
                 (data[1080] == 70 && data[1081] == 76 && data[1082] == 84 && data[1083] == 52) || // FLT4 signature
                 (data[1080] == 52 && data[1081] == 67 && data[1082] == 72 && data[1083] == 78)) { // 4CHN signature
                 samplecount = 31;
-            } else if (data[1080] == 52 && data[1081] == 67 && data[1082] == 72 && data[1083] == 78) {   // 2CHN signature
+            } else if (data[1080] == 50 && data[1081] == 67 && data[1082] == 72 && data[1083] == 78) {   // 2CHN signature
                 samplecount = 31;
                 chancount = 2;
             } else if (data[1080] == 54 && data[1081] == 67 && data[1082] == 72 && data[1083] == 78) {   // 6CHN signature
@@ -436,7 +436,6 @@ class ModPlayer
                     if (c > 31 && c < 127)
                         name += String.fromCharCode(c);
                 }
-                if (name != "") xtrace("sample " + i + ": " + name);
                 var len:Int = data.readUnsignedShort()*2;
                 var fine:Int = data.readUnsignedByte()&0x0F;
                 var vol:Int = data.readUnsignedByte();
@@ -444,8 +443,11 @@ class ModPlayer
                 var looplen:Int = data.readUnsignedShort()*2;
                 
                 if (len < 4) len = 0; // MilkyTracker bug?
-                if (fine > 7) fine = fine - 16;
-                
+                if (loopstart < 4) loopstart = 0; // ...again
+                if (looplen < 4) looplen = 0; // ... and again
+                if (fine > 7) fine = fine - 15;
+                if (name != "" || len != 0) xtrace("sample " + i + ": " + name + " (" + len + " bytes, " + loopstart + ":" + looplen + " loop)");
+
                 smp[i] = new Sample();
                 smp[i].name = name;
                 smp[i].length = len;
@@ -556,7 +558,7 @@ class ModPlayer
                         
                         if (period > 0) {
                             var diff = 50;
-                            
+                                                   
                             for (p in 672...756) {
                                 if (Math.abs(period-periods[p]) < diff) {
                                     peridx = p;
@@ -1091,7 +1093,7 @@ class ModPlayer
                     }
                 }
                 
-                if (cs.csmp == null || cs.rvolume == 0) continue;
+                if (cs.csmp == null || cs.rvolume == 0 || c != 0) continue;
                 
                 if (!cs.delaynote) {
                     var smp = (cs.csmp.wave[cs.csp >> 14] * cs.rvolume * globalvolume) >> 8;  // XM Support
