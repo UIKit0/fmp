@@ -1093,7 +1093,7 @@ class ModPlayer
                     }
                 }
                 
-                if (cs.csmp == null || cs.rvolume == 0 || c != 0) continue;
+                if (cs.csmp == null || cs.rvolume == 0) continue;
                 
                 if (!cs.delaynote) {
                     var smp = (cs.csmp.wave[cs.csp >> 14] * cs.rvolume * globalvolume) >> 8;  // XM Support
