@@ -1281,7 +1281,7 @@ class ModPlayer
         stopnow = false;
         try {
             parseData(data);
-        } catch (e:flash.Error) {
+        } catch (e:Dynamic) {
             xtrace('pderror - ' + e.message);
             if (onProgress != null) onProgress(-1);
         }
@@ -1293,7 +1293,7 @@ class ModPlayer
                 self.wave.length = self.cnt;
                 self.beginPlayback();
             });
-        } catch (e:flash.Error) {
+        } catch (e:Dynamic) {
             xtrace(e.message);
             if (onProgress != null) onProgress(-1);
             return;
@@ -1314,7 +1314,7 @@ class ModPlayer
         loader.dataFormat = flash.net.URLLoaderDataFormat.BINARY;
         try {
             loader.load(req);
-        } catch (e:flash.Error) {
+        } catch (e:Dynamic) {
             xtrace("Flash error - " + e.message);
             if (onProgress != null) onProgress(-1);
             return;

@@ -85,7 +85,7 @@ class Test
             var musicfiles:String = flash.Lib.current.loaderInfo.parameters.modfile;
             musix = musicfiles.split(",");
         } catch (whatever:Dynamic) {
-            musix = ["fog_2.xm"];
+            musix = ["gametest.mod"];
         }
         
         lastclick = haxe.Timer.stamp();
