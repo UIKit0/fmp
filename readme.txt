@@ -16,10 +16,6 @@ used independently from ModPlayer.
 
 Both the Flash MOD Player and DynSound are licensed under the zlib license.
 
-Visit http://realm.badsectoracula.com/fmp/ for more information about Flash MOD
-Player, online API documentation, more downloads and a live example of FMP in
-action.
-
 MOD Support
 ===========
 The module player supports most effects found in MOD files with the exception of
@@ -34,9 +30,7 @@ The documentation is in SlashDOC comment format. SlashDOC is a documentation
 generation tool similar to JavaDoc but for C, C++, haXe and several other
 languages i developed. The latest release of SlashDOC does not support haXe,
 but you need to download a development version from the repository. For more
-information visit http://www.badsectoracula.com/projects/slashdoc. To download
-the API documentation download the latest public release from Flash MOD Player's
-site. You can also browse it online from the Downloads section of that site.
+information visit https://github.com/badsector/slashdoc.
 
 Of course the documentation markup is very readable and you can just read the
 documentation comments in the haXe source code if you don't want to generate or
@@ -144,15 +138,13 @@ Contact
 =======
 You can contact me via email at:
 
-    badsector@runtimeterror.com
+    badsectoracula@gmail.com
 
 Flash MOD Player's page is located at:
 
-    http://realm.badsectoracula.com/fmp/ (Official page)
-    http://git.runtimeterror.com/fmp (git repository view)
+    https://github.com/badsector/fmp (github repository view)
 
 My webpage is located at:
 
-    http://www.badsectoracula.com/ (personal page)
-    http://www.runtimeterror.com/ (Flash games, see FMP in action)
+    http://www.runtimelegend.com/ (Flash games, see FMP in action)
 
